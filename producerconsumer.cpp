@@ -1,5 +1,7 @@
 #include "producerconsumer.h"
 
+mutex1 = PTHREAD_MUTEX_INITIALIZER;
+
 void producer_general(int time){
   pthread_mutex_lock( &mutex1 );
   queue_add(general);
