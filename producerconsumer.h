@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "seating.h"       
+#include "queue.h"
 #include "log.h"
 
 void *producer_general(int time);
