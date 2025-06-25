@@ -1,5 +1,5 @@
-
 #include "producerconsumer.h"
+
 void producer_general(int time){
   int delay = time;
   pthread_mutex_lock( &mutex1 );
