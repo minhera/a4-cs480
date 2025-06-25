@@ -5,4 +5,7 @@
 #include "seating.h"       
 #include "log.h"
 
-pthread_mutex_t mutex1;
+void *producer_general(int time);
+void *producer_vip(int time);
+void *consumer_tx(int time);
+void *consumer_rev9(int time);
