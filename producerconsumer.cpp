@@ -1,11 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include "producerconsumer.h"
-#include "seating.h"       
-#include "log.h"
 
+#include "producerconsumer.h"
 void producer_general(int time){
   int delay = time;
   pthread_mutex_lock( &mutex1 );
