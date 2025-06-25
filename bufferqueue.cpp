@@ -16,7 +16,7 @@ void queue_create() {
 
 }
 
-void queue_add(RequestType type) {
+void queue_add(RequestType table) {
     while (queue_count == queue_max){
         pthread_cond_wait(&not_full, &queue_lock);
     }    
@@ -24,7 +24,7 @@ void queue_add(RequestType type) {
   queue_count++;
 }
 
-void queue_remove(ConsumerType who) {
+void queue_remove(ConsumerType machine) {
     while (queue_count == 0){
         pthread_cond_wait(&not_empty, &queue_lock); 
     }
