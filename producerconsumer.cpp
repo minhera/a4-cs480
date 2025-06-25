@@ -2,7 +2,7 @@
 
 mutex1 = PTHREAD_MUTEX_INITIALIZER;
 
-void producer_general(int time){
+void *producer_general(int time){
   pthread_mutex_lock( &mutex1 );
   queue_add(general);
   pthread_mutex_unlock( &mutex1 );
@@ -13,7 +13,7 @@ void producer_general(int time){
   return NULL;
 }
 
-void producer_vip(int time){
+void *producer_vip(int time){
   pthread_mutex_lock( &mutex1 );
   queue_add(vip);
   pthread_mutex_unlock( &mutex1 );
@@ -24,7 +24,7 @@ void producer_vip(int time){
   return NULL;
 }
 
-void consumer_tx(int time){
+void *consumer_tx(int time){
   int delay = time;
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
@@ -36,7 +36,7 @@ void consumer_tx(int time){
   return NULL;
 }
 
-void consumer_rev9(int time){
+void *consumer_rev9(int time){
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
