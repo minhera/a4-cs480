@@ -1,5 +1,3 @@
-#copied this from assignment 1 with adjustment
-
 # CXX Make variable for compiler
 CC=g++
 # -std=c++11  C/C++ variant to use, e.g. C++ 2011
@@ -8,8 +6,8 @@ CC=g++
 CCFLAGS = -std=c++11 -Wall -g3 -c
 CFLAGS = -g3 -c
 
-# object files (add more later)
-OBJS =  log.o main.o 
+# object files
+OBJS =  log.o main.o bufferqueue.o producerconsumer.o
 
 # Program name
 PROGRAM = dineseating
@@ -24,7 +22,11 @@ main.o : main.cpp
 log.o : log.c log.h
 	$(CC) $(CFLAGS) log.c
 
-# Add more here when we have more files
+producerconsumer.o : producerconsumer.cpp producerconsumer.h 
+	$(CC) $(CCFLAGS) producerconsumer.cpp
+
+bufferqueue.o : bufferqueue.cpp bufferqueue.h 
+	$(CC) $(CCFLAGS) bufferqueue.cpp
 
 # Once things work, people frequently delete their object files.
 # If you use "make clean", this will do it for you.
