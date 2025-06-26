@@ -18,7 +18,7 @@ void queue_create() {
 
 void queue_add(RequestType table) {
     while (queue_count == queue_max){
-        pthread_cond_wait(&not_full, &mutex1);
+        pthread_cond_wait(&not_full, &mutex1); //This unlocks mutex1 and put thread to sleep and wait til another thread signal queue is not full
     }    
 
   queue_count++;
@@ -26,7 +26,7 @@ void queue_add(RequestType table) {
 
 void queue_remove(ConsumerType machine) {
     while (queue_count == 0){
-        pthread_cond_wait(&not_empty, &mutex1); 
+        pthread_cond_wait(&not_empty, &mutex1); //Unlocks mutex1 and put thread to sleep and wait til another thread signal queue is not empty
     }
 
   queue_count--;
