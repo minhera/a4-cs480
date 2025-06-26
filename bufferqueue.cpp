@@ -5,7 +5,7 @@
 int maximum_size = 18;
 RequestType queue_size[maximum_size];
 
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex1;
 pthread_cond_t  not_full = PTHREAD_COND_INITIALIZER;
 pthread_cond_t  not_empty = PTHREAD_COND_INITIALIZER;
 
