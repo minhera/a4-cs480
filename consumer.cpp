@@ -3,25 +3,26 @@
 #include <unistd.h>                 // For usleep
 #include <pthread.h>                // POSIX threads
 
-void *consumer_tx(int time){
-  int delay = time;
+void *consumer_tx(void* time){
+  int tx_time = *(int*)time; 
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
   if (time > 0){
-    usleep(time);
+    usleep(tx_time);
   }
   return NULL;
 }
 
-void *consumer_rev9(int time){
+void *consumer_rev9(void* time){
+  int rev9_time = *(int*)time; 
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
   if (time > 0){
-    usleep(time);
+    usleep(rev9_time);
   }
   return NULL;
 }
