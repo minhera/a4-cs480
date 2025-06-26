@@ -3,14 +3,14 @@
 #include <unistd.h>                 // For usleep
 #include <pthread.h>                // POSIX threads
 
-void *consumer_tx(void* time){
-  int tx_time = *(int*)time; 
+void* producer_general(void* time){
+  int general_time = *(int*)time; 
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
-  if (time > 0){
-    usleep(tx_time);
+  if (general_time > 0){
+    usleep(general_time);
   }
   return NULL;
 }
@@ -21,7 +21,7 @@ void *consumer_rev9(void* time){
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
-  if (time > 0){
+  if (rev9_time > 0){
     usleep(rev9_time);
   }
   return NULL;
