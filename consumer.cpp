@@ -9,7 +9,7 @@ void *consumer_tx(void* time){
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
-  if (time > 0){
+  if (tx_time > 0){
     usleep(tx_time);
   }
   return NULL;
@@ -21,7 +21,7 @@ void *consumer_rev9(void* time){
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
 
-  if (time > 0){
+  if (rev9_time > 0){
     usleep(rev9_time);
   }
   return NULL;
