@@ -6,7 +6,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <unistd.h>         //for getopt function and access to POSIX OS API
-
+#include <semaphore.h>
+#include "bufferqueue.h"
+#include "producer.h"
+#include "consumer.h"
 #include "seating.h"
 #include "log.h"
 
@@ -15,6 +18,7 @@
 #define EXIT_ERROR 1        //error exit flag
 
 //some other functions to add (maybe)
+sem_t main_barrier; // Declare semaphore, will use to signal main thread that the rest is done
 
 int main(int argc, char* argv[]) {
 
@@ -109,6 +113,8 @@ int main(int argc, char* argv[]) {
     pthread_t tx_robot;                             //thread for T-X robot
     pthread_t rev9_robot;                           //thread for Rev-9 robot
 
+    sem_init(&main_barrier, 0, 0); //Initialize semaphore
+
     //producer thread creation
     pthread_create(&gen_table_robot, NULL, producer_general, &general_time);
     pthread_create(&vip_room_robot, NULL, producer_vip, &vip_time);
@@ -117,5 +123,8 @@ int main(int argc, char* argv[]) {
     pthread_create(&tx_robot, NULL, consumer_tx, &tx_time);
     pthread_create(&rev9_robot, NULL, consumer_rev9, &rev9_time);
 
+
+    sem_wait(&main_barrier); //Wait until we get signal from the last consumer
+    
     return 0;
 }
