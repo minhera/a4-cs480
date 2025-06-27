@@ -13,7 +13,7 @@ void* producer_general(void* time){
   if (general_time > 0){
     usleep(general_time);
   }
-  return NULL;
+  return nullptr;
 }
 
 void *consumer_rev9(void* time){
@@ -26,5 +26,5 @@ void *consumer_rev9(void* time){
   if (rev9_time > 0){
     usleep(rev9_time);
   }
-  return NULL;
+  return nullptr;
 }
