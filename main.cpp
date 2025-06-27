@@ -94,5 +94,28 @@ int main(int argc, char* argv[]) {
     printf("General table greeter average time: %d\n", general_time);
     printf("VIP room greeter average time: %d\n", vip_time);
 
+        //TESTING: Command-line user interface
+    printf("Total number of seats: %d\n", total_seat_reqs);
+    printf("T-X robot average time: %d\n", tx_time);
+    printf("Rev-9 robot average time: %d\n", rev9_time);
+    printf("General table greeter average time: %d\n", general_time);
+    printf("VIP room greeter average time: %d\n", vip_time);
+
+    /*** THREAD CREATION ***/
+
+    //declare pthread variables
+    pthread_t gen_table_robot;                      //thread for general table greeting robot
+    pthread_t vip_room_robot;                       //thread for VIP room robot
+    pthread_t tx_robot;                             //thread for T-X robot
+    pthread_t rev9_robot;                           //thread for Rev-9 robot
+
+    //producer thread creation
+    pthread_create(&gen_table_robot, NULL, producer_general, &general_time);
+    pthread_create(&vip_room_robot, NULL, producer_vip, &vip_time);
+
+    //consumer thread creation
+    pthread_create(&tx_robot, NULL, consumer_tx, &tx_time);
+    pthread_create(&rev9_robot, NULL, consumer_rev9, &rev9_time);
+
     return 0;
 }
