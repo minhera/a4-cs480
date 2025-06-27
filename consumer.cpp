@@ -1,31 +1,40 @@
-#include "consumer.h"     
-#include "queue.h"           
+#include "consumer.h"
+#include "queue.h"
 #include <unistd.h>                 // For usleep
 #include <pthread.h>                // POSIX threads
+#include <semaphore.h>
 
-void *consumer_tx(void* time){
-  int tx_time = *(int*)time; 
-  while (true){ // Makes sure this thread run indefinitely
-    pthread_mutex_lock( &mutex1 );
-    queue_remove(item);
-    pthread_mutex_unlock( &mutex1 );
-  
+//GET RID OF THIS GLOBAL VARIABLE
 
-    usleep(tx_time);
-  }
-  }
-  return nullptr;
+extern sem_t barrier_sem;
+
+// Consumer thread for T-X robot
+void* consumer_tx(void* arg) {
+    int delay = *((int*)arg);
+    while (true) {
+        pthread_mutex_lock(&queue_lock);
+        queue_remove(TX);
+        if (produced[GeneralTable] + produced[VIPRoom] == production_limit && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
+            sem_post(&barrier_sem);
+        pthread_mutex_unlock(&queue_lock);                            // Remove request from queue
+        if (delay > 0) usleep(delay * 1000);                              // Simulate consumption delay
+
+    }
+    return NULL;
 }
 
-void *consumer_rev9(void* time){
-  int rev9_time = *(int*)time; 
-  while (true){ // Makes sure this thread run indefinitely
-  pthread_mutex_lock( &mutex1 );
-  queue_remove(item);
-  pthread_mutex_unlock( &mutex1 );
+// Consumer thread for Rev-9 robot
+void* consumer_rev9(void* arg) {
+    int delay = *((int*)arg);
+    while (true) {
+        pthread_mutex_lock(&queue_lock);
+        queue_remove(Rev9);
+        if (produced[GeneralTable] + produced[VIPRoom] == production_limit && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
+            sem_post(&barrier_sem);
+        pthread_mutex_unlock(&queue_lock);              // Remove request from queue
+        if (delay > 0)
+            usleep(delay * 1000);                           // Simulate delay
 
-    usleep(rev9_time);
-  }
-  }
-  return nullptr;
+    }
+    return NULL;
 }
