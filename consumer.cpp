@@ -5,24 +5,26 @@
 
 void *consumer_tx(void* time){
   int tx_time = *(int*)time; 
-  pthread_mutex_lock( &mutex1 );
-  queue_remove(item);
-  pthread_mutex_unlock( &mutex1 );
-
+  while (true){ // Makes sure this thread run indefinitely
+    pthread_mutex_lock( &mutex1 );
+    queue_remove(item);
+    pthread_mutex_unlock( &mutex1 );
+  }
   if (tx_time > 0){
     usleep(tx_time);
   }
-  return NULL;
+  return nullptr;
 }
 
 void *consumer_rev9(void* time){
   int rev9_time = *(int*)time; 
+  while (true){ // Makes sure this thread run indefinitely
   pthread_mutex_lock( &mutex1 );
   queue_remove(item);
   pthread_mutex_unlock( &mutex1 );
-
+  }
   if (rev9_time > 0){
     usleep(rev9_time);
   }
-  return NULL;
+  return nullptr;
 }
