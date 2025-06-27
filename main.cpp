@@ -116,12 +116,12 @@ int main(int argc, char* argv[]) {
     sem_init(&main_barrier, 0, 0); //Initialize semaphore
 
     //producer thread creation
-    pthread_create(&gen_table_robot, NULL, producer_general, &general_time);
-    pthread_create(&vip_room_robot, NULL, producer_vip, &vip_time);
+    pthread_create(&gen_table_robot, nullptr, producer_general, &general_time);
+    pthread_create(&vip_room_robot, nullptr, producer_vip, &vip_time);
 
     //consumer thread creation
-    pthread_create(&tx_robot, NULL, consumer_tx, &tx_time);
-    pthread_create(&rev9_robot, NULL, consumer_rev9, &rev9_time);
+    pthread_create(&tx_robot, nullptr, consumer_tx, &tx_time);
+    pthread_create(&rev9_robot, nullptr, consumer_rev9, &rev9_time);
 
 
     sem_wait(&main_barrier); //Wait until we get signal from the last consumer
