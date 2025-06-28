@@ -21,7 +21,7 @@ void* producer_general(void* arg) {
 
     //run while loop indefinitely until a break statement can be reached
     while (true) {
-        pthread_mutex_lock(&queue_lock);                                 // Lock queue for safe access
+        pthread_mutex_lock(&mutex1);                                 // Lock queue for safe access
 
         //check if the total requests produced has reached the number of seat requests
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
@@ -29,7 +29,7 @@ void* producer_general(void* arg) {
             break;
         }
         queue_add(GeneralTable);                                         // Add general table request
-        pthread_mutex_unlock(&queue_lock);                               // Unlock after adding
+        pthread_mutex_unlock(&mutex1);                               // Unlock after adding
         // Simulate production delay in milliseconds
         if (delay > 0)
             usleep(delay * 1000);
@@ -44,7 +44,7 @@ void* producer_vip(void* arg) {
 
     //run while loop indefinitely until a break statement can be reached
     while (true) {
-        pthread_mutex_lock(&queue_lock);                                 // Lock queue for safe access
+        pthread_mutex_lock(&mutex1);                                 // Lock queue for safe access
 
         //check if the total requests produced has reached the number of seat requests
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
@@ -59,7 +59,7 @@ void* producer_vip(void* arg) {
             continue;
         }
         queue_add(VIPRoom);                                              // Add VIP request
-        pthread_mutex_unlock(&queue_lock);                               // Unlock queue
+        pthread_mutex_unlock(&mutex1);                               // Unlock queue
         // Simulate production delay in milliseconds
         if (delay > 0)
             usleep(delay * 1000);
