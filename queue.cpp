@@ -14,10 +14,11 @@ std::queue<RequestType> request_queue;
 //store the number of requests in the queue
 int count = 0;
 
-//inititialize arrays
+//inititialize arrays for logging
 unsigned int produced[RequestTypeN] = {0};
 unsigned int inRequestQueue[RequestTypeN] = {0};
 unsigned int* consumed[ConsumerTypeN] = {{0}};
+unsigned int consumed_counts[ConsumerTypeN][RequestTypeN] = {{0}};      //storing consumption counts per consumer per request type
 
 //declare pthread mutex and conditions
 pthread_mutex_t mutex1;
@@ -28,6 +29,11 @@ void queue_init() {
     pthread_mutex_init(&mutex1, nullptr);               //mutex variable we will use to lock the queue
     pthread_cond_init(&not_full, nullptr);              //not full condition
     pthread_cond_init(&not_empty, nullptr);             //not empty condition
+    
+    //loop through each consumer 
+    for (int i = 0; i < ConsumerTypeN; ++i) {           
+    consumed[i] = consumed_counts[i];
+	}
 }
 
 void queue_add(RequestType type) {
