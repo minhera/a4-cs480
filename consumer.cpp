@@ -7,7 +7,6 @@
 #include <pthread.h>                // POSIX threads
 #include <semaphore.h>
 
-int count = 0;
 extern sem_t barrier_sem;
 
 /* General note
@@ -19,17 +18,17 @@ extern sem_t barrier_sem;
 void* consumer_tx(void* arg) {
     //how long the request takes
     int delay = *((int*)arg);       //cast the argument to int* and dereference it to obtain the value
-    
+
     //run while loop indefinitely until there are no more requests left
     while (true) {
         pthread_mutex_lock(&queue_lock);
         queue_remove(TX);
-        
+
         //check if the total requests produced has reached the number of seat requests
         //AND that there are no more requests in the queue
-        if (produced[GeneralTable] + produced[VIPRoom] >= total_seat_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
+        if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
             sem_post(&barrier_sem);             //once that happens, we can signal the main thread that we are done
-        
+
         pthread_mutex_unlock(&queue_lock);                              // Remove request from queue
 
         // Simulate consumption delay in milliseconds
@@ -43,12 +42,12 @@ void* consumer_tx(void* arg) {
 // Consumer thread for Rev-9 robot
 void* consumer_rev9(void* arg) {
     int delay = *((int*)arg);
-    
+
     //run while loop indefinitely
     while (true) {
         pthread_mutex_lock(&queue_lock);
         queue_remove(Rev9);
-        if (produced[GeneralTable] + produced[VIPRoom] >= total_seat_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
+        if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
             sem_post(&barrier_sem);
         pthread_mutex_unlock(&queue_lock);              // Remove request from queue
         // Simulate consumption delay in milliseconds
