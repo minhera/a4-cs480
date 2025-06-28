@@ -7,24 +7,27 @@
 #include <queue>
 #include <semaphore.h>
 
+//declare the request queue
 std::queue<RequestType> request_queue;
+
+//declare and initialize the variable we will use to
+//store the number of requests in the queue
 int count = 0;
 
+//inititialize arrays
 unsigned int produced[RequestTypeN] = {0};
 unsigned int inRequestQueue[RequestTypeN] = {0};
-unsigned int* consumed[ConsumerTypeN];
-unsigned int consumed_counts[ConsumerTypeN][RequestTypeN] = {{0}};
+unsigned int* consumed[ConsumerTypeN] = {{0}};
 
-pthread_mutex_t queue_lock;
+//declare pthread mutex and conditions
+pthread_mutex_t mutex1;
 pthread_cond_t not_full, not_empty;
 
-//initialize queue values
+//initialize pthread mutex and conditions
 void queue_init() {
-    pthread_mutex_init(&queue_lock, nullptr);
-    pthread_cond_init(&not_full, nullptr);
-    pthread_cond_init(&not_empty, nullptr);
-    consumed[TX] = consumed_counts[TX];
-    consumed[Rev9] = consumed_counts[Rev9];
+    pthread_mutex_init(&mutex1, nullptr);               //mutex variable we will use to lock the queue
+    pthread_cond_init(&not_full, nullptr);              //not full condition
+    pthread_cond_init(&not_empty, nullptr);             //not empty condition
 }
 
 void queue_add(RequestType type) {
