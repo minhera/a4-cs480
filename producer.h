@@ -1,3 +1,6 @@
+// Names: Minh Tran & Ryan Alakija
+// Red ID: 129986763 && 826620776
+
 #ifndef PRODUCER_H           
 #define PRODUCER_H
 
