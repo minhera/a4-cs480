@@ -1,8 +1,6 @@
 // Names: Minh Tran & Ryan Alakija
 // Red ID: 129986763 && 826620776
-//
-// Created by User on 6/23/2025.
-//
+
 #include <stdio.h>
 #include <iostream>
 #include <unistd.h>         //for getopt function and access to POSIX OS API
@@ -15,22 +13,23 @@
 #include "consumer.h"
 #include "log.h"
 
+unsigned int total_seating_reqs = 120; 				//total number of seating requests that will take place in the simulation
+
 #define EXIT_NORMAL 0       //normal exit flag
 #define EXIT_ERROR 1        //error exit flag
 
-sem_t barrier_sem;                              // Used to signal main thread when done
+sem_t barrier_sem;  // Used to signal main thread when done
 
 int main(int argc, char* argv[]) {
 
     /*** COMMAND LINE USER INTERFACE + INITIALIZATION ***/
-    
+
     //declare & initialize variables w/ default values
-    unsigned int total_seat_reqs = 120;             //total number of seating requests that will take place in the simulation
 
     //consumers
     unsigned int tx_time = 0;                       //average time for T-X robot to process seating request + guide customers to proper seating
     unsigned int rev9_time = 0;                     //average time for Rev-9 robot (same as T-X robot)
-    
+
     //producers
     unsigned int general_time = 0;                  //average time for general table greeter robot to produce and insert general table request
     unsigned int vip_time = 0;                      //average time for VIP room greeter robot to produce and insert VIP room request
@@ -46,7 +45,7 @@ int main(int argc, char* argv[]) {
      *    optind - the index that represents the first argument in argv to process AFTER
      *             all the optional arguments are processed; we will not need this here
      */
-    
+
     //if getopt() returns -1, there are no command-line flag arguments given, thus we skip
     while ((option = getopt(argc, argv, "s:x:r:g:v:")) != -1) {
         //error handling for any non-int arguments;
@@ -66,11 +65,11 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "Each flag argument must be a non-negative number\n");
             exit(EXIT_ERROR);
         }
-        
+
         //now that we passed the error-detecting try-catch block, we will process these optional arguments
         switch (option) {
             case 's':
-                total_seat_reqs = temp_int;
+                total_seating_reqs = temp_int;
                 break;
             case 'x':
                 tx_time = temp_int;
@@ -91,26 +90,14 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    //TESTING: Command-line user interface
-    printf("Total number of seats: %d\n", total_seat_reqs);
-    printf("T-X robot average time: %d\n", tx_time);
-    printf("Rev-9 robot average time: %d\n", rev9_time);
-    printf("General table greeter average time: %d\n", general_time);
-    printf("VIP room greeter average time: %d\n", vip_time);
-
-    /*** THREAD CREATION ***/
-
-    //declare pthread variables
     pthread_t gen_table_robot;                      //thread for general table greeting robot
     pthread_t vip_room_robot;                       //thread for VIP room robot
     pthread_t tx_robot;                             //thread for T-X robot
     pthread_t rev9_robot;                           //thread for Rev-9 robot
 
-    //initialize queue and semaphore
     queue_init();
     sem_init(&barrier_sem, 0, 0);
 
-    //create pthreads and pass the time variables to each respective functions
     pthread_create(&gen_table_robot, nullptr, producer_general, &general_time);
     pthread_create(&vip_room_robot, nullptr, producer_vip, &vip_time);
     pthread_create(&tx_robot, nullptr, consumer_tx, &tx_time);
@@ -121,8 +108,6 @@ int main(int argc, char* argv[]) {
 
     sem_wait(&barrier_sem);
 
-    //call log.c function to display the history of number of requests both produced and consumed
     output_production_history(produced, consumed);
-
     return 0;
 }
