@@ -14,11 +14,13 @@ std::queue<RequestType> request_queue;
 //store the number of requests in the queue
 int count = 0;
 
-//inititialize arrays for logging
+//inititialize arrays
 unsigned int produced[RequestTypeN] = {0};
 unsigned int inRequestQueue[RequestTypeN] = {0};
-unsigned int* consumed[ConsumerTypeN] = {{0}};
-unsigned int consumed_counts[ConsumerTypeN][RequestTypeN] = {{0}};      //storing consumption counts per consumer per request type
+unsigned int* consumed[ConsumerTypeN];
+
+//initialize a double array to help initialize the above int* array
+unsigned int consumed_counts[ConsumerTypeN][RequestTypeN] = {{0}};
 
 //declare pthread mutex and conditions
 pthread_mutex_t mutex1;
@@ -29,11 +31,11 @@ void queue_init() {
     pthread_mutex_init(&mutex1, nullptr);               //mutex variable we will use to lock the queue
     pthread_cond_init(&not_full, nullptr);              //not full condition
     pthread_cond_init(&not_empty, nullptr);             //not empty condition
-    
-    //loop through each consumer 
-    for (int i = 0; i < ConsumerTypeN; ++i) {           
-    	consumed[i] = consumed_counts[i];
-    }
+
+    //initialize consumed array
+    int i;
+    for (i = 0; i < ConsumerTypeN; ++i)
+        consumed[i] = consumed_counts[i];
 }
 
 void queue_add(RequestType type) {
@@ -42,7 +44,7 @@ void queue_add(RequestType type) {
 
     //if the queue is full, wait till an item is removed before adding item
     while (count == max_queue_size)
-        pthread_cond_wait(&not_full, &queue_lock);
+        pthread_cond_wait(&not_full, &mutex1);
 
     //add an item to the queue, increment the count
     request_queue.push(type);
@@ -59,10 +61,10 @@ void queue_add(RequestType type) {
     pthread_cond_signal(&not_empty);
 }
 
-void queue_remove(ConsumerType who) {
+void queue_remove(ConsumerType robot) {
     //if the queue is empty, wait till an item comes along
     while (count == 0)
-        pthread_cond_wait(&not_empty, &queue_lock);
+        pthread_cond_wait(&not_empty, &mutex1);
 
     //obtain the request (and its type) from the queue before removing it
     RequestType type = request_queue.front();
@@ -73,11 +75,11 @@ void queue_remove(ConsumerType who) {
 
     //another request has been consumed, but now there is one
     //less request in the queue
-    consumed[who][type]++;
+    consumed[robot][type]++;
     inRequestQueue[type]--;
 
     //call the output function that displays the removal / consumption of a request
-    output_request_removed(who, type, consumed[who], inRequestQueue);
+    output_request_removed(robot, type, consumed[robot], inRequestQueue);
 
     //now that we carried this function out, we can also signal that the request is not full
     pthread_cond_signal(&not_full);
