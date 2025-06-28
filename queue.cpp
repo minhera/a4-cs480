@@ -32,8 +32,8 @@ void queue_init() {
     
     //loop through each consumer 
     for (int i = 0; i < ConsumerTypeN; ++i) {           
-    consumed[i] = consumed_counts[i];
-	}
+    	consumed[i] = consumed_counts[i];
+    }
 }
 
 void queue_add(RequestType type) {
