@@ -18,13 +18,13 @@ extern sem_t barrier_sem;
 void* producer_general(void* arg) {
     //how long the request takes
     int delay = *((int*)arg);       //cast the argument to int* and dereference it to obtain the value
-    
+
     //run while loop indefinitely until a break statement can be reached
     while (true) {
         pthread_mutex_lock(&queue_lock);                                 // Lock queue for safe access
-        
+
         //check if the total requests produced has reached the number of seat requests
-        if (produced[GeneralTable] + produced[VIPRoom] >= total_seat_reqs) {
+        if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
             pthread_mutex_unlock(&queue_lock);                           // Unlock and exit if limit reached
             break;
         }
@@ -40,14 +40,14 @@ void* producer_general(void* arg) {
 // Producer thread for VIP room requests
 void* producer_vip(void* arg) {
     int delay = *((int*)arg);       //cast the argument to int* and dereference it to obtain the value
-    int max_vip_size = 5;           //threshold value for the maximum number of VIP requests in queue
+    unsigned int max_vip_size = 5;           //threshold value for the maximum number of VIP requests in queue
 
     //run while loop indefinitely until a break statement can be reached
     while (true) {
         pthread_mutex_lock(&queue_lock);                                 // Lock queue for safe access
-        
+
         //check if the total requests produced has reached the number of seat requests
-        if (produced[GeneralTable] + produced[VIPRoom] >= total_seat_reqs) {
+        if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
             // if so, unlock mutex and then exit (hence the break statement)
             pthread_mutex_unlock(&queue_lock);
             break;
