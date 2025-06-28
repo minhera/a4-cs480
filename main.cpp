@@ -95,19 +95,25 @@ int main(int argc, char* argv[]) {
     pthread_t tx_robot;                             //thread for T-X robot
     pthread_t rev9_robot;                           //thread for Rev-9 robot
 
+    //initialize queue and semaphore
     queue_init();
     sem_init(&barrier_sem, 0, 0);
 
+    //create pthreads and pass the time variables to each respective functions
     pthread_create(&gen_table_robot, nullptr, producer_general, &general_time);
     pthread_create(&vip_room_robot, nullptr, producer_vip, &vip_time);
     pthread_create(&tx_robot, nullptr, consumer_tx, &tx_time);
     pthread_create(&rev9_robot, nullptr, consumer_rev9, &rev9_time);
 
+    //wait for both production threads to terminate
     pthread_join(gen_table_robot, nullptr);
     pthread_join(vip_room_robot, nullptr);
 
+    //block main from exiting until sem_post() is called
+    //this is what terminates the consumer threads
     sem_wait(&barrier_sem);
 
+    //call log.c function to display the history of number of requests both produced and consumed
     output_production_history(produced, consumed);
     return 0;
 }
