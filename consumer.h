@@ -1,3 +1,6 @@
+// Names: Minh Tran & Ryan Alakija
+// Red ID: 129986763 && 826620776
+
 #ifndef CONSUMER_H           
 #define CONSUMER_H
 
