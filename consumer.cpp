@@ -21,7 +21,7 @@ void* consumer_tx(void* arg) {
 
     //run while loop indefinitely until there are no more requests left
     while (true) {
-        pthread_mutex_lock(&queue_lock);
+        pthread_mutex_lock(&mutex1);
         queue_remove(TX);
 
         //check if the total requests produced has reached the number of seat requests
@@ -29,7 +29,7 @@ void* consumer_tx(void* arg) {
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
             sem_post(&barrier_sem);             //once that happens, we can signal the main thread that we are done
 
-        pthread_mutex_unlock(&queue_lock);                              // Remove request from queue
+        pthread_mutex_unlock(&mutex1);                              // Remove request from queue
 
         // Simulate consumption delay in milliseconds
         if (delay > 0)
@@ -45,11 +45,11 @@ void* consumer_rev9(void* arg) {
 
     //run while loop indefinitely
     while (true) {
-        pthread_mutex_lock(&queue_lock);
+        pthread_mutex_lock(&mutex1);
         queue_remove(Rev9);
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs && inRequestQueue[GeneralTable] + inRequestQueue[VIPRoom] == 0)
             sem_post(&barrier_sem);
-        pthread_mutex_unlock(&queue_lock);              // Remove request from queue
+        pthread_mutex_unlock(&mutex1);              // Remove request from queue
         // Simulate consumption delay in milliseconds
         if (delay > 0)
             usleep(delay * 1000);
