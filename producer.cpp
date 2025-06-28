@@ -25,7 +25,7 @@ void* producer_general(void* arg) {
 
         //check if the total requests produced has reached the number of seat requests
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
-            pthread_mutex_unlock(&queue_lock);                           // Unlock and exit if limit reached
+            pthread_mutex_unlock(&qmutex1);                           // Unlock and exit if limit reached
             break;
         }
         queue_add(GeneralTable);                                         // Add general table request
@@ -49,7 +49,7 @@ void* producer_vip(void* arg) {
         //check if the total requests produced has reached the number of seat requests
         if (produced[GeneralTable] + produced[VIPRoom] >= total_seating_reqs) {
             // if so, unlock mutex and then exit (hence the break statement)
-            pthread_mutex_unlock(&queue_lock);
+            pthread_mutex_unlock(&mutex1);
             break;
         }
         // Respect VIP room max constraint
