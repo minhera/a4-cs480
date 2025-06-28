@@ -6,19 +6,19 @@
 #include <stdio.h>
 #include <iostream>
 #include <unistd.h>         //for getopt function and access to POSIX OS API
+#include <pthread.h>
 #include <semaphore.h>
-#include "bufferqueue.h"
+
+#include "queue.h"
+#include "seating.h"
 #include "producer.h"
 #include "consumer.h"
-#include "seating.h"
 #include "log.h"
 
-//MAYBE CONSIDER MOVING THIS TO HEADER FILE OF CLASS (once we create it)
 #define EXIT_NORMAL 0       //normal exit flag
 #define EXIT_ERROR 1        //error exit flag
 
-//some other functions to add (maybe)
-sem_t main_barrier; // Declare semaphore, will use to signal main thread that the rest is done
+sem_t barrier_sem;                              // Used to signal main thread when done
 
 int main(int argc, char* argv[]) {
 
@@ -98,13 +98,6 @@ int main(int argc, char* argv[]) {
     printf("General table greeter average time: %d\n", general_time);
     printf("VIP room greeter average time: %d\n", vip_time);
 
-        //TESTING: Command-line user interface
-    printf("Total number of seats: %d\n", total_seat_reqs);
-    printf("T-X robot average time: %d\n", tx_time);
-    printf("Rev-9 robot average time: %d\n", rev9_time);
-    printf("General table greeter average time: %d\n", general_time);
-    printf("VIP room greeter average time: %d\n", vip_time);
-
     /*** THREAD CREATION ***/
 
     //declare pthread variables
@@ -113,18 +106,23 @@ int main(int argc, char* argv[]) {
     pthread_t tx_robot;                             //thread for T-X robot
     pthread_t rev9_robot;                           //thread for Rev-9 robot
 
-    sem_init(&main_barrier, 0, 0); //Initialize semaphore
+    //initialize queue and semaphore
+    queue_init();
+    sem_init(&barrier_sem, 0, 0);
 
-    //producer thread creation
+    //create pthreads and pass the time variables to each respective functions
     pthread_create(&gen_table_robot, nullptr, producer_general, &general_time);
     pthread_create(&vip_room_robot, nullptr, producer_vip, &vip_time);
-
-    //consumer thread creation
     pthread_create(&tx_robot, nullptr, consumer_tx, &tx_time);
     pthread_create(&rev9_robot, nullptr, consumer_rev9, &rev9_time);
 
+    pthread_join(gen_table_robot, nullptr);
+    pthread_join(vip_room_robot, nullptr);
 
-    sem_wait(&main_barrier); //Wait until we get signal from the last consumer
-    
+    sem_wait(&barrier_sem);
+
+    //call log.c function to display the history of number of requests both produced and consumed
+    output_production_history(produced, consumed);
+
     return 0;
 }
